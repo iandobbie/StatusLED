@@ -13,7 +13,7 @@ innerLEDs=12
 totalLEDs = (innerLEDs+outerLEDs)
 
 cabinetStart=0
-cabinetLEDs=28
+cabinetLEDs=30
 
 #Setup stuff.
 
@@ -36,7 +36,6 @@ class StatusLED():
         self.cabinetLEDs=cabinetLEDs
         self.progress=0
         self.savedProgress=(0,0,0)
-        print self.ringStart
         
     #Function to call on an image snap
     def onSnap(self,t=0.1):
@@ -46,13 +45,13 @@ class StatusLED():
         self.pulseLEDs(pulseIntensity,t)
 
 
-    def onError(self,t=1.0):
+    def onError(self,t=1.0, repeats=30):
         pulseIntensity=copy.copy(self.intensity)
         for i in range(outerLEDs):
             pulseIntensity[self.ringStart+i]=(self.power,0,0)
-        for i in range(5):
+        for i in range(repeats):
             self.pulseLEDs(pulseIntensity,t)
-            time.sleep(1.0)
+            time.sleep(t)
 
     def setWhite(self):
         for i in range(self.totalLEDs):
@@ -122,7 +121,11 @@ class StatusLED():
         for i in range(23):
             self.intensity[self.ringStart+i]=(255,0,0)
             self.intensity[self.ringStart+i+1]=(255,0,0)      
-            self.intensity[self.ringStart+self.outerLEDs+int(i/2)]=(255,0,0)
+            if i%2 == 0:
+                self.intensity[self.ringStart+self.outerLEDs+int(i/2)]=(255,0,0)
+            else:
+                self.intensity[self.ringStart+self.outerLEDs+int(i/2)]=(150,0,0)
+                self.intensity[self.ringStart+self.outerLEDs+int(i/2)+1]=(150,0,0)
             self.setLEDs(None)
             time.sleep(1)
             self.intensity[self.ringStart+i]=(100,100,100)
